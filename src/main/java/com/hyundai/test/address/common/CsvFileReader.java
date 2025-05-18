@@ -1,64 +1,119 @@
 package com.hyundai.test.address.common;
 
+import com.hyundai.test.address.dao.SequenceDao;
+import com.hyundai.test.address.mapper.CustomerMapper;
+import com.hyundai.test.address.service.AddressBookService;
+import com.hyundai.test.address.util.MessageUtil;
+import com.hyundai.test.address.util.ValidationUtil;
+import lombok.extern.slf4j.Slf4j;
 import com.hyundai.test.address.dao.AddressBookDao;
 import com.hyundai.test.address.model.Customer;
+import com.hyundai.test.address.model.Sequence;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class CsvFileReader {
 
     private final AddressBookDao addressBookDao;
+    private final AddressBookService addressBookService;
+    private final CustomerMapper customerMapper;
+    private final SequenceDao sequenceDao;
+    private final MessageUtil messageUtil;
+    private final Validator validator;
+    private final ValidationUtil validationUtil;
 
     @PostConstruct
-    public void initAddressBook() {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("csv/success_address.csv");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+    public void initAddressBook() throws IOException {
+        try {
+            List<String> lines = read("csv/address.csv");
 
-            String line;
             boolean firstLine = true;
-            while ((line = reader.readLine()) != null) {
+            for (String line : lines) {
                 if (firstLine) {
                     firstLine = false;
                     continue;
                 }
 
                 String[] fields = line.split(",", -1);
-                if (fields.length != 4) {
-                    System.out.println("⚠ 잘못된 데이터 스킵: " + line);
+                if (fields.length != 5) {
+                    log.warn("{} - {}", messageUtil.getMessage("log.csv.invalid.field"), line);
                     continue;
                 }
 
                 Customer customer = Customer.builder()
-                        .phoneNumber(fields[0].trim())
-                        .name(fields[1].trim())
-                        .address(fields[2].trim())
+                        .id(Long.parseLong(fields[0].trim()))
+                        .address(fields[1].trim())
+                        .phoneNumber(fields[2].trim().replace("-", ""))
                         .email(fields[3].trim())
+                        .name(fields[4].trim())
                         .build();
 
-//                if (addressBookDao.findByPhoneNumber(customer.getPhoneNumber()).isPresent()) {
-//                    System.out.println("⚠ 중복 전화번호 스킵: " + customer.getPhoneNumber());
-//                    continue;
-//                }
+                // 데이터 검증
+                BindingResult bindingResult = new BeanPropertyBindingResult(customer, "Customer");
+                validator.validate(customer, bindingResult);
+                try {
+                    validationUtil.validateBindingResultOrThrow(bindingResult);
+                    addressBookService.validateAllConflict(customerMapper.toCustomerUpdateRequest(customer));
+                } catch (Exception e) {
+                    log.warn("{} - {}", messageUtil.getMessage("log.csv.invalid"), line);
+                    continue;
+                }
 
-                addressBookDao.insert(customer);
+                addressBookDao.save(customer);
             }
-
-            System.out.println("✅ CSV 데이터 메모리에 로드 완료");
+            log.info(messageUtil.getMessage("log.csv.read.success"));
 
         } catch (Exception e) {
-            System.out.println("❌ CSV 로드 실패: " + e.getMessage());
+            log.error("{}, {}", messageUtil.getMessage("log.csv.read.fail"), e.getMessage());
+            throw e;
+        }
+    }
+
+    @PostConstruct
+    public void initSequence() {
+        try {
+            List<String> lines = read("csv/sequence.csv");
+
+            boolean firstLine = true;
+            for (String line : lines) {
+                if (firstLine) {
+                    firstLine = false;
+                    continue;
+                }
+                String[] fields = line.split(",", -1);
+                if (fields.length != 2) {
+                    log.warn("{}, {}", messageUtil.getMessage("log.csv.invalid.field"), line);
+                    continue;
+                }
+
+                Sequence sequence = Sequence.builder()
+                        .data(fields[0].trim())
+                        .maxSequence(Long.parseLong(fields[1].trim()))
+                        .build();
+
+                sequenceDao.insert(sequence);
+            }
+
+            log.info(messageUtil.getMessage("log.csv.read.success"));
+            log.debug("{}", sequenceDao);
+
+        } catch (Exception e) {
+            log.error("{}, {}", messageUtil.getMessage("log.csv.read.fail"), e.getMessage());
         }
     }
 
@@ -72,5 +127,4 @@ public class CsvFileReader {
         }
         return lines;
     }
-
 }

@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
@@ -19,43 +16,63 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AddressBookDao {
     private final Map<String, Customer> addressBook = new ConcurrentHashMap<>(); //TODO ConcurrentHashMap
     private final Map<String, Customer> addressBook_readOnly = new ConcurrentHashMap<>();
+// TODO lines 비교해서 지울지말지 결정    private final Map<String, Customer> addressBook_init = new ConcurrentHashMap<>(); //TODO ConcurrentHashMap
 
-    public void insert(Customer customer) {
-        try {
-            if (findByPhoneNumber(customer.getPhoneNumber()).isPresent()) {
-                System.out.println("⚠ 중복 전화번호 스킵: " + customer.getPhoneNumber());
-            } else {
-                addressBook.put(customer.getPhoneNumber(), customer);
-                addressBook_readOnly.put(customer.getPhoneNumber(), customer);
-            }
-        } catch (Exception e) {
-
-        }
+    public Customer save(Customer customer) {
+        addressBook.put(customer.getIdStr(), customer);
+        addressBook_readOnly.put(customer.getIdStr(), customer);
+        return customer;
     }
 
-    //TODO update
-
-    public void delete(String phoneNumber) {
-        addressBook.remove(phoneNumber);
+    public Customer delete(Long id) {
+        addressBook.remove(id);
+        return addressBook_readOnly.remove(id);
     }
 
-    public void clearAll() {
-        addressBook.clear();
+    public Optional<Customer> findById(Long id) {
+        return Optional.ofNullable(addressBook_readOnly.get(id.toString()));
     }
 
     public Optional<Customer> findByPhoneNumber(String phoneNumber) {
-        return Optional.ofNullable(addressBook_readOnly.get(phoneNumber));
+        for (Customer customer : addressBook_readOnly.values()) {
+            if (phoneNumber.equals(customer.getPhoneNumber())) {
+                return Optional.of(customer);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Customer> findByEmail(String email) {
+        for (Customer customer : addressBook_readOnly.values()) {
+            if (email.equals(customer.getEmail())) {
+                return Optional.of(customer);
+            }
+        }
+        return Optional.empty();
     }
 
     public List<Customer> findAll() {
         return new ArrayList<>(addressBook_readOnly.values()); //TODO List, ArrayList
     }
 
-    public Optional<Customer> findByEmail(String email) {
-        return Optional.ofNullable(addressBook_readOnly.get(email));
-    }
-
     public Map<String, Customer> getaddressBook() {
         return addressBook_readOnly;
     }
+
+    public List<String> toCsvLines() {
+        List<Customer> customerList = new ArrayList<>(addressBook.values());
+        customerList.sort(Comparator.comparing(Customer::getId));
+        List<String> lines = new ArrayList<>();
+        lines.add("고객ID,주소,연락처,이메일,이름"); // 헤더
+        for (Customer c : customerList) {
+            lines.add(String.format("%s,%s,%s,%s,%s",
+                    c.getIdStr(),
+                    c.getAddress(),
+                    c.getPhoneNumber(),
+                    c.getEmail(),
+                    c.getName()));
+        }
+        return lines;
+    }
+
 }
