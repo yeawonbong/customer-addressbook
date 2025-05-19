@@ -1,14 +1,17 @@
 package com.hyundai.test.address.dao;
 
 import com.hyundai.test.address.model.Customer;
+import com.hyundai.test.address.util.MessageUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @RequiredArgsConstructor
 @Setter
 @Getter
@@ -16,17 +19,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AddressBookDao {
     private final Map<String, Customer> addressBook = new ConcurrentHashMap<>(); //TODO ConcurrentHashMap
     private final Map<String, Customer> addressBook_readOnly = new ConcurrentHashMap<>();
+    private final MessageUtil messageUtil;
 // TODO lines 비교해서 지울지말지 결정    private final Map<String, Customer> addressBook_init = new ConcurrentHashMap<>(); //TODO ConcurrentHashMap
 
     public Customer save(Customer customer) {
         addressBook.put(customer.getIdStr(), customer);
-        addressBook_readOnly.put(customer.getIdStr(), customer);
-        return customer;
+        Customer customerSaved = addressBook_readOnly.put(customer.getIdStr(), customer);
+        log.debug(messageUtil.getMessage("log.customer.save.success")); // TODO 로그내용 수정하기
+        return customerSaved;
     }
 
-    public Customer delete(Long id) {
-        addressBook.remove(id);
-        return addressBook_readOnly.remove(id);
+    public Customer delete(Customer customer) {
+        addressBook.remove(customer.getIdStr());
+        Customer customerDeleted = addressBook_readOnly.remove(customer.getIdStr());
+        log.debug(messageUtil.getMessage("log.customer.delete.success"));
+        return customerDeleted;
     }
 
     public Optional<Customer> findById(Long id) {

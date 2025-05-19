@@ -1,6 +1,7 @@
 package com.hyundai.test.address.controller;
 
 import com.hyundai.test.address.dto.CustomerRequest;
+import com.hyundai.test.address.dto.CustomerResponse;
 import com.hyundai.test.address.dto.CustomerUpdateRequest;
 import com.hyundai.test.address.dto.CustomerUpdateResponse;
 import com.hyundai.test.address.model.Customer;
@@ -66,10 +67,17 @@ public class AddressBookController {
         return ResponseEntity.ok(addressBookService.updateCustomer(id, dto));
     }
 
-    @DeleteMapping("/{phoneNumber}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
-        addressBookService.deleteCustomer(id);
-        return ResponseEntity.ok().build();
+    @Operation(summary = "고객 정보 삭제"
+            , description = "고객 정보 삭제 API<br>- since: 2024-05-20, 봉예원")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "등록 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값 오류"),
+            @ApiResponse(responseCode = "409", description = "중복 오류")
+    })
+    @DeleteMapping("/customers")
+    public ResponseEntity<List<CustomerResponse>> deleteCustomers(@RequestBody List<Long> ids) {
+        List<CustomerResponse> deletedCustomers = addressBookService.deleteCustomers(ids);
+        return ResponseEntity.ok(deletedCustomers);
     }
 }
 

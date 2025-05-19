@@ -36,11 +36,17 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handleNotFound(ConflictException e) {
+    public ResponseEntity<?> handleNotFound(NotFoundException e) {
         log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(ErrorCode.NOT_FOUND_ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(NoChangeException.class)
+    public ResponseEntity<ErrorResponse> handleNoChangeException(NoChangeException ex) {
+        ErrorResponse error = new ErrorResponse(ErrorCode.CONFLICT_ERROR, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(Exception.class)

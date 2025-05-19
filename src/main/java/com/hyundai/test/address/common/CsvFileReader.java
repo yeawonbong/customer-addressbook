@@ -43,6 +43,7 @@ public class CsvFileReader {
             List<String> lines = read("csv/address.csv");
 
             boolean firstLine = true;
+            Long saveCnt = 0L;
             for (String line : lines) {
                 if (firstLine) {
                     firstLine = false;
@@ -75,8 +76,9 @@ public class CsvFileReader {
                 }
 
                 addressBookDao.save(customer);
+                saveCnt++;
             }
-            log.info(messageUtil.getMessage("log.csv.read.success"));
+            log.info("{} ({}/{})", messageUtil.getMessage("log.csv.read.success"), saveCnt, lines.size());
 
         } catch (Exception e) {
             log.error("{}, {}", messageUtil.getMessage("log.csv.read.fail"), e.getMessage());
