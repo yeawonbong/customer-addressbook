@@ -78,7 +78,8 @@ public class CsvFileReader {
                 addressBookDao.save(customer);
                 saveCnt++;
             }
-            log.info("{} ({}/{})", messageUtil.getMessage("log.csv.read.success"), saveCnt, lines.size());
+            addressBookDao.setAddressBook_init();
+            log.info("{} ({}/{})", messageUtil.getMessage("log.csv.read.success"), saveCnt, lines.size() - 1);
 
         } catch (Exception e) {
             log.error("{}, {}", messageUtil.getMessage("log.csv.read.fail"), e.getMessage());

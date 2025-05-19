@@ -2,9 +2,8 @@ package com.hyundai.test.address.dao;
 
 import com.hyundai.test.address.model.Customer;
 import com.hyundai.test.address.util.MessageUtil;
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -13,20 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
-@Setter
-@Getter
+@Data
 @Repository
 public class AddressBookDao {
     private final Map<String, Customer> addressBook = new ConcurrentHashMap<>(); //TODO ConcurrentHashMap
     private final Map<String, Customer> addressBook_readOnly = new ConcurrentHashMap<>();
     private final MessageUtil messageUtil;
-// TODO lines 비교해서 지울지말지 결정    private final Map<String, Customer> addressBook_init = new ConcurrentHashMap<>(); //TODO ConcurrentHashMap
+    private List<String> addressBook_init;
 
     public Customer save(Customer customer) {
         addressBook.put(customer.getIdStr(), customer);
-        Customer customerSaved = addressBook_readOnly.put(customer.getIdStr(), customer);
+        addressBook_readOnly.put(customer.getIdStr(), customer);
         log.debug(messageUtil.getMessage("log.customer.save.success")); // TODO 로그내용 수정하기
-        return customerSaved;
+        return customer;
     }
 
     public Customer delete(Customer customer) {
@@ -58,12 +56,12 @@ public class AddressBookDao {
         return Optional.empty();
     }
 
-    public List<Customer> findAll() {
-        return new ArrayList<>(addressBook_readOnly.values()); //TODO List, ArrayList
+    public Map<String, Customer> getAddressBook() {
+        return addressBook_readOnly;
     }
 
-    public Map<String, Customer> getaddressBook() {
-        return addressBook_readOnly;
+    public void setAddressBook_init() {
+        this.addressBook_init = this.toCsvLines();
     }
 
     public List<String> toCsvLines() {

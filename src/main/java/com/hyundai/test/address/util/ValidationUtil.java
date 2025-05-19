@@ -1,8 +1,5 @@
 package com.hyundai.test.address.util;
 
-import com.hyundai.test.address.dao.AddressBookDao;
-import com.hyundai.test.address.dto.CustomerRequest;
-import com.hyundai.test.address.exception.ConflictException;
 import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +14,6 @@ import org.springframework.validation.FieldError;
 @Component
 public class ValidationUtil {
 
-    private final AddressBookDao addressBook;
     private final MessageUtil messageUtil;
 
     public void validateBindingResultOrThrow(BindingResult bindingResult) {

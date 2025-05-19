@@ -28,11 +28,14 @@ public class CsvFileWriter {
     public void saveDataOnShutdown() {
         String addressCsvPath = "src/main/resources/csv/address.csv";
         String sequenceCsvPath = "src/main/resources/csv/sequence.csv";
-
-        backupAndOverwriteCsv(addressCsvPath, addressBookDao.toCsvLines());
-        overwriteCsv(sequenceCsvPath, sequenceDao.toCsvLines());
+        String saveMessage = "변경된 데이터가 없어 저장하지 않습니다.";
+        if (!addressBookDao.toCsvLines().equals(addressBookDao.getAddressBook_init())) {
+            backupAndOverwriteCsv(addressCsvPath, addressBookDao.toCsvLines());
+            overwriteCsv(sequenceCsvPath, sequenceDao.toCsvLines());
+            saveMessage = "데이터가 CSV 파일에 저장되었습니다.";
+        }
         System.out.println("\n**************************************************");
-        System.out.println("   [프로그램 종료] 데이터가 CSV 파일에 저장되었습니다.   ");
+        System.out.println("   [프로그램 종료] " + saveMessage);
         System.out.println("**************************************************\n");
     }
 

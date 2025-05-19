@@ -2,9 +2,6 @@ package com.hyundai.test.address.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
-import static com.hyundai.test.address.util.ValidationPatterns.PATTERN_PHONE;
 
 @Data
 @NoArgsConstructor
