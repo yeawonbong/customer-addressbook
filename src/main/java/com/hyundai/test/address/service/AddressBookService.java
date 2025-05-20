@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 고객 주소록 서비스
+ * - 고객 정보의 CRUD 작업 처리
+ * - 데이터 유효성 검증 및 비즈니스 로직 처리
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -29,6 +34,12 @@ public class AddressBookService {
     private final SequenceDao sequenceDao;
     private final CustomerMapper customerMapper;
 
+    /**
+     * 새로운 고객 정보를 등록합니다.
+     * @param dto 등록할 고객 정보
+     * @return 등록된 고객 정보
+     * @throws ConflictException 중복된 고객 정보가 존재할 경우
+     */
     public Customer addCustomer(CustomerRequest dto) {
         Customer customer = customerMapper.toCustomer(dto);
         customer.setId(sequenceDao.getNextSequence(ADDRESS));
@@ -36,6 +47,14 @@ public class AddressBookService {
         return addressBook.save(customer);
     }
 
+    /**
+     * 고객 정보를 검색합니다.
+     * @param filter 필터
+     * @param keyword 검색 키워드
+     * @param sortBy 정렬 기준
+     * @param sortDir 정렬 방향
+     * @return 검색된 고객 목록
+     */
     public List<Customer> searchCustomers(
             String filter, String keyword, String sortBy, String sortDir
     ) {
@@ -88,6 +107,15 @@ public class AddressBookService {
         return value.toLowerCase().contains(keyword.toLowerCase());
     }
 
+    /**
+     * 고객 정보를 수정합니다.
+     * @param id 수정할 고객 ID
+     * @param dto 수정할 고객 정보
+     * @return 수정된 고객 정보
+     * @throws NotFoundException 고객 정보가 존재하지 않을 경우
+     * @throws ConflictException 중복된 고객 정보가 존재할 경우
+     * @throws NoChangeException 변경된 정보가 없을 경우
+     */
     public Map<String, Customer> updateCustomer(Long id, CustomerRequest dto) {
         Customer customerBefore = validateKeyExist(id);
         validateUkConflict(id, dto);
@@ -103,6 +131,11 @@ public class AddressBookService {
         return updatedCustomer;
     }
 
+    /**
+     * 고객 정보를 삭제합니다.
+     * @param ids 삭제할 고객 ID 목록
+     * @return 삭제된 고객 정보 목록
+     */
     public List<Customer> deleteCustomers(List<Long> ids) {
         List<Customer> deletedCustomers = new ArrayList<>();
         for (Long id : ids) {

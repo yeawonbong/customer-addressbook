@@ -1,6 +1,6 @@
 package com.hyundai.test.address.util;
 
-import jakarta.validation.ValidationException;
+import com.hyundai.test.address.exception.BizValidationException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class ValidationUtil {
         if (bindingResult != null && bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
             String errorMsg = error.getDefaultMessage();
-            throw new ValidationException(StringUtils.isBlank(errorMsg) ? defaultMsg : errorMsg);
+            throw new BizValidationException(StringUtils.isBlank(errorMsg) ? defaultMsg : errorMsg);
         }
     }
 

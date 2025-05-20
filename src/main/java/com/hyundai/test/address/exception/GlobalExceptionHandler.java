@@ -3,13 +3,13 @@ package com.hyundai.test.address.exception;
 import com.hyundai.test.address.common.ErrorCode;
 import com.hyundai.test.address.dto.ErrorResponse;
 import com.hyundai.test.address.util.MessageUtil;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
 
     private final MessageUtil messageUtil;
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<?> handleValidation(ValidationException e) {
+    @ExceptionHandler(BizValidationException.class)
+    public ResponseEntity<?> handleBizValidation(BizValidationException e) {
         log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -47,6 +47,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNoChangeException(NoChangeException ex) {
         ErrorResponse error = new ErrorResponse(ErrorCode.CONFLICT_ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException e) {
+        log.error(e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ErrorCode.VALIDATION_ERROR, messageUtil.getMessage("validation.default")));
     }
 
     @ExceptionHandler(Exception.class)
