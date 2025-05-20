@@ -1,10 +1,7 @@
 package com.hyundai.test.address.controller;
 
-import com.hyundai.test.address.dto.CustomerRequest;
-import com.hyundai.test.address.dto.CustomerResponse;
-import com.hyundai.test.address.dto.CustomerUpdateRequest;
-import com.hyundai.test.address.dto.CustomerUpdateResponse;
-import com.hyundai.test.address.dto.CustomerSearchRequest;
+import com.hyundai.test.address.dto.*;
+import com.hyundai.test.address.mapper.CustomerMapper;
 import com.hyundai.test.address.service.AddressBookService;
 import com.hyundai.test.address.util.ValidationUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +23,7 @@ public class AddressBookController {
 
     private final AddressBookService addressBookService;
     private final ValidationUtil validationUtil;
+    private final CustomerMapper customerMapper;
 
     @Operation(summary = "고객 등록"
             , description = "고객 등록 API<br>- since: 2024-05-20, 봉예원")
@@ -39,7 +37,8 @@ public class AddressBookController {
             @RequestBody @Validated CustomerRequest reqDto,
             BindingResult bindingResult) {
         validationUtil.validateBindingResultOrThrow(bindingResult); //요청값 유효 검증
-        return ResponseEntity.status(HttpStatus.CREATED).body(addressBookService.addCustomer(reqDto));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(customerMapper.toCustomerResponse(addressBookService.addCustomer(reqDto)));
     }
 
     @Operation(
@@ -51,18 +50,18 @@ public class AddressBookController {
             @ApiResponse(responseCode = "400", description = "입력값 오류")
     })
     @GetMapping
-    public ResponseEntity<List<CustomerResponse>> searchCustomers(
+    public ResponseEntity<CustomerSearchResponse> searchCustomers(
             @Validated @ModelAttribute CustomerSearchRequest reqDto,
             BindingResult bindingResult
     ) {
         validationUtil.validateBindingResultOrThrow(bindingResult); //요청값 유효 검증
-        return ResponseEntity.ok(
+        return ResponseEntity.ok(customerMapper.toCustomerSearchResponse(
                 addressBookService.searchCustomers(
                         reqDto.getFilter(),
                         reqDto.getKeyword(),
                         reqDto.getSortBy(),
                         reqDto.getSortDir())
-        );
+        ));
     }
 
     @Operation(
@@ -78,11 +77,13 @@ public class AddressBookController {
     @PutMapping("/{id}")
     public ResponseEntity<CustomerUpdateResponse> updateCustomer(
             @PathVariable Long id,
-            @RequestBody @Validated CustomerUpdateRequest dto,
+            @RequestBody @Validated CustomerRequest dto,
             BindingResult bindingResult
     ) {
         validationUtil.validateBindingResultOrThrow(bindingResult); //요청값 유효 검증
-        return ResponseEntity.ok(addressBookService.updateCustomer(id, dto));
+        return ResponseEntity.ok(customerMapper.toCustomerUpdateResponse(
+                addressBookService.updateCustomer(id, dto)
+        ));
     }
 
     @Operation(
@@ -95,9 +96,10 @@ public class AddressBookController {
             @ApiResponse(responseCode = "404", description = "고객 없음")
     })
     @PostMapping("/delete")
-    public ResponseEntity<List<CustomerResponse>> deleteCustomers(@RequestBody List<Long> ids) {
-        List<CustomerResponse> deletedCustomers = addressBookService.deleteCustomers(ids);
-        return ResponseEntity.ok(deletedCustomers);
+    public ResponseEntity<CustomerDeleteResponse> deleteCustomers(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(customerMapper.toCustomerDeleteResponse(
+                addressBookService.deleteCustomers(ids)
+        ));
     }
 }
 

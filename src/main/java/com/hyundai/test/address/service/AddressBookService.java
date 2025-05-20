@@ -3,9 +3,6 @@ package com.hyundai.test.address.service;
 import com.hyundai.test.address.dao.AddressBookDao;
 import com.hyundai.test.address.dao.SequenceDao;
 import com.hyundai.test.address.dto.CustomerRequest;
-import com.hyundai.test.address.dto.CustomerResponse;
-import com.hyundai.test.address.dto.CustomerUpdateRequest;
-import com.hyundai.test.address.dto.CustomerUpdateResponse;
 import com.hyundai.test.address.exception.ConflictException;
 import com.hyundai.test.address.exception.NoChangeException;
 import com.hyundai.test.address.exception.NotFoundException;
@@ -17,9 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,14 +29,14 @@ public class AddressBookService {
     private final SequenceDao sequenceDao;
     private final CustomerMapper customerMapper;
 
-    public CustomerResponse addCustomer(CustomerRequest dto) {
+    public Customer addCustomer(CustomerRequest dto) {
         Customer customer = customerMapper.toCustomer(dto);
         customer.setId(sequenceDao.getNextSequence(ADDRESS));
-        validateAllConflict(customerMapper.toCustomerUpdateRequest(customer));
-        return customerMapper.toCustomerResponse(addressBook.save(customer));
+        validateAllConflict(customer);
+        return addressBook.save(customer);
     }
 
-    public List<CustomerResponse> searchCustomers(
+    public List<Customer> searchCustomers(
             String filter, String keyword, String sortBy, String sortDir
     ) {
         // 전체 리스트 가져오기
@@ -84,9 +79,7 @@ public class AddressBookService {
         customerList.sort(comparator);
 
         // 3. 매핑
-        return customerList.stream()
-                .map(customerMapper::toCustomerResponse)
-                .collect(Collectors.toList());
+        return customerList;
     }
 
     // 문자열 부분일치(대소문자 무시)
@@ -95,7 +88,7 @@ public class AddressBookService {
         return value.toLowerCase().contains(keyword.toLowerCase());
     }
 
-    public CustomerUpdateResponse updateCustomer(Long id, CustomerRequest dto) {
+    public Map<String, Customer> updateCustomer(Long id, CustomerRequest dto) {
         Customer customerBefore = validateKeyExist(id);
         validateUkConflict(id, dto);
         Customer customerAfter = customerMapper.toCustomer(dto);
@@ -103,19 +96,23 @@ public class AddressBookService {
         if (customerBefore.equals(customerAfter)) {
             throw new NoChangeException(messageUtil.getMessage("customer.nochange"));
         }
-        return customerMapper.toCustomerUpdateResponse(customerBefore, addressBook.save(customerAfter));
+        addressBook.save(customerAfter);
+        Map<String, Customer> updatedCustomer = new HashMap<>();
+        updatedCustomer.put("before", customerBefore);
+        updatedCustomer.put("after", customerAfter);
+        return updatedCustomer;
     }
 
-    public List<CustomerResponse> deleteCustomers(List<Long> ids) {
-        List<CustomerResponse> deletedCustomers = new ArrayList<>();
+    public List<Customer> deleteCustomers(List<Long> ids) {
+        List<Customer> deletedCustomers = new ArrayList<>();
         for (Long id : ids) {
             Customer customer = validateKeyExist(id);
-            deletedCustomers.add(customerMapper.toCustomerResponse(addressBook.delete(customer)));
+            deletedCustomers.add(addressBook.delete(customer));
         }
         return deletedCustomers;
     }
 
-    public void validateAllConflict(CustomerUpdateRequest dto) {
+    public void validateAllConflict(Customer dto) {
         if (addressBook.findById(dto.getId()).isPresent()) {
             throw new ConflictException(messageUtil.getMessage("validation.conflict.id"));
         }

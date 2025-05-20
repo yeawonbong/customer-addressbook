@@ -20,6 +20,7 @@ public class AddressBookDao {
     private final MessageUtil messageUtil;
     private List<String> addressBook_init;
 
+    // add와 update 모두 사용하는 메서드
     public Customer save(Customer customer) {
         addressBook.put(customer.getIdStr(), customer);
         addressBook_readOnly.put(customer.getIdStr(), customer);

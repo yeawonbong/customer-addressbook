@@ -1,14 +1,14 @@
 package com.hyundai.test.address.mapper;
 
-import com.hyundai.test.address.dto.CustomerRequest;
-import com.hyundai.test.address.dto.CustomerResponse;
-import com.hyundai.test.address.dto.CustomerUpdateRequest;
-import com.hyundai.test.address.dto.CustomerUpdateResponse;
+import com.hyundai.test.address.dto.*;
 import com.hyundai.test.address.model.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
@@ -18,18 +18,26 @@ public interface CustomerMapper {
     @Mapping(target = "phoneNumber", qualifiedByName = "sanitizePhoneNumber")
     Customer toCustomer(CustomerRequest dto);
 
-    @Mapping(target = "phoneNumber", qualifiedByName = "sanitizePhoneNumber")
-    Customer toCustomer(CustomerUpdateRequest dto);
-
-    CustomerRequest toCustomerRequest(Customer customer);
-    CustomerUpdateRequest toCustomerUpdateRequest(Customer customer);
-    CustomerResponse toCustomerResponse(Customer customer);
-    default CustomerUpdateResponse toCustomerUpdateResponse(Customer before, Customer after) {
-        return CustomerUpdateResponse.builder()
-                .before(toCustomerResponse(before))
-                .after(toCustomerResponse(after))
+    default CustomerSearchResponse toCustomerSearchResponse(List<Customer> customerList) {
+        return CustomerSearchResponse.builder()
+                .count(customerList.size())
+                .customers(customerList)
                 .build();
     }
+
+    CustomerResponse toCustomerResponse(Customer customer);
+    default CustomerUpdateResponse toCustomerUpdateResponse(Map<String, Customer> updatedCustomer) {
+        return CustomerUpdateResponse.builder()
+                .before(updatedCustomer.get("before"))
+                .after(updatedCustomer.get("after"))
+                .build();
+    }
+    default CustomerDeleteResponse toCustomerDeleteResponse(List<Customer> deletedCustomers) {
+        return CustomerDeleteResponse.builder()
+                .deletedCount(deletedCustomers.size())
+                .deletedCustomers(deletedCustomers)
+                .build();
+    };
 
     @Named("sanitizePhoneNumber")
     static String sanitizePhoneNumber(String phoneNumber) {

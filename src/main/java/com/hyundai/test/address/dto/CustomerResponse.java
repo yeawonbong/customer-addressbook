@@ -1,5 +1,6 @@
 package com.hyundai.test.address.dto;
 
+import com.hyundai.test.address.model.Customer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -9,9 +10,5 @@ import lombok.*;
 @Builder
 @Schema(description = "고객 정보 responseDto")
 public class CustomerResponse {
-    private Long id;
-    private String address;
-    private String phoneNumber;
-    private String email;
-    private String name;
+    Customer customer;
 }

@@ -69,7 +69,7 @@ public class CsvFileReader {
                 validator.validate(customer, bindingResult);
                 try {
                     validationUtil.validateBindingResultOrThrow(bindingResult);
-                    addressBookService.validateAllConflict(customerMapper.toCustomerUpdateRequest(customer));
+                    addressBookService.validateAllConflict(customer);
                 } catch (Exception e) {
                     log.warn("{} - {}", messageUtil.getMessage("log.csv.invalid"), line);
                     continue;
