@@ -75,14 +75,14 @@
 - DAO: 데이터 접근 및 관리
 - Exception: 전역 예외 처리
 - Util: 메시지 및 유효성 검사 관리
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+
+
 ---
-# [참고] API 상세
+
+# API 상세 문서
+
+<details>
+<summary><strong> `PUT` /api/customers/{id} - 고객 정보 수정</strong></summary>
 
 ## `PUT` /api/customers/{id}
 **Summary:** 고객 정보 수정
@@ -129,7 +129,7 @@
 ```
 ### Responses:
 - **200**: 수정 성공
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -145,7 +145,7 @@
 }
 ```
 - **400**: 입력값 오류
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -161,7 +161,7 @@
 }
 ```
 - **404**: 고객 없음
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -177,7 +177,7 @@
 }
 ```
 - **409**: 중복 오류
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -192,7 +192,11 @@
   "description": "고객 정보 수정 responseDto"
 }
 ```
----
+</details>
+
+<details>
+<summary><strong> `GET` /api/customers - 고객 목록 조회</strong></summary>
+
 ## `GET` /api/customers
 **Summary:** 고객 목록 조회
 **Description:** 검색/정렬 가능한 고객 정보 리스트 조회 API  - since: 2024-05-20, 봉예원
@@ -201,7 +205,7 @@
 - `reqDto` (query): ``
 ### Responses:
 - **200**: 조회 성공
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -223,7 +227,7 @@
 }
 ```
 - **400**: 입력값 오류
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -244,7 +248,12 @@
   "description": "고객 정보 조회 responseDto"
 }
 ```
----
+
+</details>
+
+<details>
+<summary><strong> `POST` /api/customers - 고객 등록</strong></summary>
+
 ## `POST` /api/customers
 **Summary:** 고객 등록
 **Description:** 고객 등록 API  - since: 2024-05-20, 봉예원
@@ -288,7 +297,7 @@
 ```
 ### Responses:
 - **201**: 등록 성공
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -301,7 +310,7 @@
 }
 ```
 - **400**: 입력값 오류
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -314,7 +323,7 @@
 }
 ```
 - **409**: 중복 오류
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -326,7 +335,12 @@
   "description": "고객 정보 responseDto"
 }
 ```
----
+
+</details>
+
+<details>
+<summary><strong> `POST` /api/customers/delete - 고객 삭제</strong></summary>
+
 ## `POST` /api/customers/delete
 **Summary:** 고객 정보 삭제
 **Description:** 여러 고객 정보 삭제 API  - since: 2024-05-20, 봉예원
@@ -335,7 +349,7 @@
 - Content-Type: `application/json`
 ### Responses:
 - **200**: 삭제 성공
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -357,7 +371,7 @@
 }
 ```
 - **400**: 입력값 오류
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -379,7 +393,7 @@
 }
 ```
 - **404**: 고객 없음
-    - Content-Type: `*/*`
+  - Content-Type: `*/*`
 ```json
 {
   "type": "object",
@@ -400,4 +414,7 @@
   "description": "고객 정보 삭제 responseDto"
 }
 ```
+
+</details>
+
 ---
