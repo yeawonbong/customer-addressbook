@@ -83,109 +83,43 @@
 **Description:** 고객 정보 수정 API  - since: 2024-05-20, 봉예원
 
 ### Parameters:
-- `id` (path): `integer`
+- `id` (path): `integer` 5
 ### Request Body:
 - Content-Type: `application/json`
 ```json
 {
-  "required": [
-    "address",
-    "email",
-    "name",
-    "phoneNumber"
-  ],
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "이름",
-      "example": "홍길동"
-    },
-    "email": {
-      "type": "string",
-      "description": "이메일",
-      "example": "gildong@test.com"
-    },
-    "phoneNumber": {
-      "pattern": "^(010)(\\d{7,8}|-\\d{3,4}-\\d{4})$",
-      "type": "string",
-      "description": "전화번호",
-      "example": "010-1234-1234"
-    },
-    "address": {
-      "type": "string",
-      "description": "주소",
-      "example": "서울특별시 마포구"
-    }
-  },
-  "description": "고객 정보 RequestDTO"
+  "address": "서울특별시 마포구",
+  "phoneNumber": "010-1234-1234",
+  "email": "gildong@testt.com",
+  "name": "홍길동"
 }
 ```
 ### Responses:
 - **200**: 수정 성공
-  - Content-Type: `*/*`
 ```json
 {
-  "type": "object",
-  "properties": {
-    "before": {
-      "$ref": "#/components/schemas/Customer"
-    },
-    "after": {
-      "$ref": "#/components/schemas/Customer"
-    }
+  "before": {
+    "id": 5,
+    "address": "전라북도 남원시",
+    "phoneNumber": "01000000003",
+    "email": "sung@hyundai.com",
+    "name": "성춘향",
+    "idStr": "5"
   },
-  "description": "고객 정보 수정 responseDto"
+  "after": {
+    "id": 5,
+    "address": "서울특별시 마포구",
+    "phoneNumber": "01012341234",
+    "email": "gildong@testt.com",
+    "name": "홍길동",
+    "idStr": "5"
+  }
 }
 ```
 - **400**: 입력값 오류
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "before": {
-      "$ref": "#/components/schemas/Customer"
-    },
-    "after": {
-      "$ref": "#/components/schemas/Customer"
-    }
-  },
-  "description": "고객 정보 수정 responseDto"
-}
-```
 - **404**: 고객 없음
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "before": {
-      "$ref": "#/components/schemas/Customer"
-    },
-    "after": {
-      "$ref": "#/components/schemas/Customer"
-    }
-  },
-  "description": "고객 정보 수정 responseDto"
-}
-```
 - **409**: 중복 오류
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "before": {
-      "$ref": "#/components/schemas/Customer"
-    },
-    "after": {
-      "$ref": "#/components/schemas/Customer"
-    }
-  },
-  "description": "고객 정보 수정 responseDto"
-}
-```
+
 </details>
 
 <details>
@@ -196,52 +130,49 @@
 **Description:** 검색/정렬 가능한 고객 정보 리스트 조회 API  - since: 2024-05-20, 봉예원
 
 ### Parameters:
-- `reqDto` (query): ``
-### Responses:
-- **200**: 조회 성공
-  - Content-Type: `*/*`
+- `reqDto` (query): 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "count": {
-      "type": "integer",
-      "description": "검색된 고객 수",
-      "format": "int32"
+  "keyword": "01",
+  "filter": "phoneNumber",
+  "sortBy": "phoneNumber",
+  "sortDir": "asc"
+}
+```
+### Responses:
+- **200**: 조회 성공
+```json
+{
+  "count": 3,
+  "customers": [
+    {
+      "id": 5,
+      "address": "전라북도 남원시",
+      "phoneNumber": "01000000003",
+      "email": "sung@hyundai.com",
+      "name": "성춘향",
+      "idStr": "5"
     },
-    "customers": {
-      "type": "array",
-      "description": "검색된 고객 목록",
-      "items": {
-        "$ref": "#/components/schemas/Customer"
-      }
+    {
+      "id": 7,
+      "address": "전라북도 남원시",
+      "phoneNumber": "0100000004",
+      "email": "lee3@hyundai.com",
+      "name": "이몽룡",
+      "idStr": "7"
+    },
+    {
+      "id": 10,
+      "address": "서울특별시 마포구",
+      "phoneNumber": "01012301234",
+      "email": "gildong@test.com",
+      "name": "홍길동",
+      "idStr": "10"
     }
-  },
-  "description": "고객 정보 조회 responseDto"
+  ]
 }
 ```
 - **400**: 입력값 오류
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "count": {
-      "type": "integer",
-      "description": "검색된 고객 수",
-      "format": "int32"
-    },
-    "customers": {
-      "type": "array",
-      "description": "검색된 고객 목록",
-      "items": {
-        "$ref": "#/components/schemas/Customer"
-      }
-    }
-  },
-  "description": "고객 정보 조회 responseDto"
-}
-```
 
 </details>
 
@@ -256,37 +187,10 @@
 - Content-Type: `application/json`
 ```json
 {
-  "required": [
-    "address",
-    "email",
-    "name",
-    "phoneNumber"
-  ],
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "이름",
-      "example": "홍길동"
-    },
-    "email": {
-      "type": "string",
-      "description": "이메일",
-      "example": "gildong@test.com"
-    },
-    "phoneNumber": {
-      "pattern": "^(010)(\\d{7,8}|-\\d{3,4}-\\d{4})$",
-      "type": "string",
-      "description": "전화번호",
-      "example": "010-1234-1234"
-    },
-    "address": {
-      "type": "string",
-      "description": "주소",
-      "example": "서울특별시 마포구"
-    }
-  },
-  "description": "고객 정보 RequestDTO"
+  "address": "서울특별시 마포구",
+  "phoneNumber": "010-1230-1234",
+  "email": "gildong@test.com",
+  "name": "홍길동"
 }
 ```
 ### Responses:
@@ -294,41 +198,18 @@
   - Content-Type: `*/*`
 ```json
 {
-  "type": "object",
-  "properties": {
-    "customer": {
-      "$ref": "#/components/schemas/Customer"
-    }
-  },
-  "description": "고객 정보 responseDto"
+  "customer": {
+    "id": 10,
+    "address": "서울특별시 마포구",
+    "phoneNumber": "01012301234",
+    "email": "gildong@test.com",
+    "name": "홍길동",
+    "idStr": "10"
+  }
 }
 ```
 - **400**: 입력값 오류
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "customer": {
-      "$ref": "#/components/schemas/Customer"
-    }
-  },
-  "description": "고객 정보 responseDto"
-}
-```
 - **409**: 중복 오류
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "customer": {
-      "$ref": "#/components/schemas/Customer"
-    }
-  },
-  "description": "고객 정보 responseDto"
-}
-```
 
 </details>
 
@@ -341,73 +222,47 @@
 
 ### Request Body:
 - Content-Type: `application/json`
+```json
+[
+  1,2,3
+]
+```
 ### Responses:
 - **200**: 삭제 성공
   - Content-Type: `*/*`
 ```json
 {
-  "type": "object",
-  "properties": {
-    "deletedCount": {
-      "type": "integer",
-      "description": "삭제된 고객 수",
-      "format": "int32"
+  "deletedCount": 3,
+  "deletedCustomers": [
+    {
+      "id": 1,
+      "address": "서울특별시 마포구",
+      "phoneNumber": "01012341234",
+      "email": "gildong@test.com",
+      "name": "홍길동",
+      "idStr": "1"
     },
-    "deletedCustomers": {
-      "type": "array",
-      "description": "삭제된 고객 목록",
-      "items": {
-        "$ref": "#/components/schemas/Customer"
-      }
+    {
+      "id": 2,
+      "address": "경기도 성남시",
+      "phoneNumber": "0100000001",
+      "email": "lee@hyundai.com",
+      "name": "이몽룡",
+      "idStr": "2"
+    },
+    {
+      "id": 3,
+      "address": "강원도 강릉시",
+      "phoneNumber": "01000000002",
+      "email": "lee2@hyundai.com",
+      "name": "이순신",
+      "idStr": "3"
     }
-  },
-  "description": "고객 정보 삭제 responseDto"
+  ]
 }
 ```
 - **400**: 입력값 오류
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "deletedCount": {
-      "type": "integer",
-      "description": "삭제된 고객 수",
-      "format": "int32"
-    },
-    "deletedCustomers": {
-      "type": "array",
-      "description": "삭제된 고객 목록",
-      "items": {
-        "$ref": "#/components/schemas/Customer"
-      }
-    }
-  },
-  "description": "고객 정보 삭제 responseDto"
-}
-```
 - **404**: 고객 없음
-  - Content-Type: `*/*`
-```json
-{
-  "type": "object",
-  "properties": {
-    "deletedCount": {
-      "type": "integer",
-      "description": "삭제된 고객 수",
-      "format": "int32"
-    },
-    "deletedCustomers": {
-      "type": "array",
-      "description": "삭제된 고객 목록",
-      "items": {
-        "$ref": "#/components/schemas/Customer"
-      }
-    }
-  },
-  "description": "고객 정보 삭제 responseDto"
-}
-```
 
 </details>
 
