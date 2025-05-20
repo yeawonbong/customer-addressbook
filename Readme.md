@@ -75,6 +75,9 @@
 
 # API 상세 문서
 
+Swagger(로컬 실행후)에서 API 문서를 확인할 수 있습니다.  
+http://localhost:8080/swagger-ui/index.html#/
+
 <details>
 <summary><strong> `PUT` /api/customers/{id} - 고객 정보 수정</strong></summary>
 
