@@ -1,7 +1,6 @@
 package com.hyundai.test.address.common;
 
 import com.hyundai.test.address.dao.SequenceDao;
-import com.hyundai.test.address.mapper.CustomerMapper;
 import com.hyundai.test.address.service.AddressBookService;
 import com.hyundai.test.address.util.MessageUtil;
 import com.hyundai.test.address.util.ValidationUtil;
@@ -31,7 +30,6 @@ public class CsvFileReader {
 
     private final AddressBookDao addressBookDao;
     private final AddressBookService addressBookService;
-    private final CustomerMapper customerMapper;
     private final SequenceDao sequenceDao;
     private final MessageUtil messageUtil;
     private final Validator validator;

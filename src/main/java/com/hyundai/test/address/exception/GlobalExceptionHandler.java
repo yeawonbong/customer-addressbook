@@ -44,9 +44,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoChangeException.class)
-    public ResponseEntity<ErrorResponse> handleNoChangeException(NoChangeException ex) {
-        ErrorResponse error = new ErrorResponse(ErrorCode.CONFLICT_ERROR, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    public ResponseEntity<?> handleNoChangeException(NoChangeException e) {
+        log.error(e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ErrorCode.CONFLICT_ERROR, e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

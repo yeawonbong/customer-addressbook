@@ -10,5 +10,5 @@ import lombok.*;
 @Builder
 @Schema(description = "고객 정보 responseDto")
 public class CustomerResponse {
-    Customer customer;
+    private Customer customer;
 }
