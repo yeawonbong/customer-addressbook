@@ -105,7 +105,7 @@ http://localhost:8080/swagger-ui/index.html#/
     "id": 5,
     "address": "전라북도 남원시",
     "phoneNumber": "01000000003",
-    "email": "sung@hyundai.com",
+    "email": "sung@ybong.com",
     "name": "성춘향",
     "idStr": "5"
   },
@@ -152,7 +152,7 @@ http://localhost:8080/swagger-ui/index.html#/
       "id": 5,
       "address": "전라북도 남원시",
       "phoneNumber": "01000000003",
-      "email": "sung@hyundai.com",
+      "email": "sung@ybong.com",
       "name": "성춘향",
       "idStr": "5"
     },
@@ -160,7 +160,7 @@ http://localhost:8080/swagger-ui/index.html#/
       "id": 7,
       "address": "전라북도 남원시",
       "phoneNumber": "0100000004",
-      "email": "lee3@hyundai.com",
+      "email": "lee3@ybong.com",
       "name": "이몽룡",
       "idStr": "7"
     },
@@ -249,7 +249,7 @@ http://localhost:8080/swagger-ui/index.html#/
       "id": 2,
       "address": "경기도 성남시",
       "phoneNumber": "0100000001",
-      "email": "lee@hyundai.com",
+      "email": "lee@ybong.com",
       "name": "이몽룡",
       "idStr": "2"
     },
@@ -257,7 +257,7 @@ http://localhost:8080/swagger-ui/index.html#/
       "id": 3,
       "address": "강원도 강릉시",
       "phoneNumber": "01000000002",
-      "email": "lee2@hyundai.com",
+      "email": "lee2@ybong.com",
       "name": "이순신",
       "idStr": "3"
     }
